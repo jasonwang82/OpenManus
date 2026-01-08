@@ -1,0 +1,65 @@
+# CodeBuddy Backend Configuration Example
+# This configuration file demonstrates how to use CodeBuddy Agent SDK as the LLM backend
+
+[llm]
+# Backend selection - set to "codebuddy" to use CodeBuddy Agent SDK
+backend = "codebuddy"
+
+# Model to use with CodeBuddy (supports OpenAI, Claude, and other models)
+model = "gpt-4o"
+
+# For CodeBuddy backend, these are optional and used for fallback/compatibility
+base_url = "https://api.openai.com/v1"
+api_key = "your-api-key-here"
+
+# Token limits
+max_tokens = 4096
+max_input_tokens = 100000  # Optional: set a limit on total input tokens
+
+# Temperature for response generation
+temperature = 0.0
+
+# API type (kept for compatibility, but CodeBuddy handles this)
+api_type = "openai"
+api_version = ""
+
+# CodeBuddy-specific settings
+# Path to CodeBuddy CLI executable (optional, SDK will try to find it)
+# codebuddy_code_path = "/path/to/codebuddy"
+
+# Permission mode for CodeBuddy
+# - "default": All operations require confirmation (default)
+# - "acceptEdits": Auto-approve file edits
+# - "plan": Planning mode, only allow reads
+# - "bypassPermissions": Skip all permission checks (recommended for OpenManus integration)
+permission_mode = "bypassPermissions"
+
+# Optional: Configure specific models for different tasks
+[llm.vision]
+backend = "codebuddy"
+model = "gpt-4o"
+base_url = "https://api.openai.com/v1"
+api_key = "your-api-key-here"
+permission_mode = "bypassPermissions"
+
+# Browser configuration
+[browser]
+headless = false
+disable_security = true
+
+# Search configuration
+[search]
+engine = "Google"
+lang = "en"
+country = "us"
+
+# Sandbox configuration
+[sandbox]
+use_sandbox = false
+image = "python:3.12-slim"
+work_dir = "/workspace"
+memory_limit = "512m"
+cpu_limit = 1.0
+timeout = 300
+network_enabled = false
+

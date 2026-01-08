@@ -1,0 +1,21 @@
+{
+  "name": "beijing-travel-guide",
+  "version": "1.0.0",
+  "description": "北京三日游地图路书",
+  "main": "index.js",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "vue": "^2.6.14",
+    "element-ui": "^2.15.13",
+    "axios": "^0.27.2"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^5.0.8",
+    "vue-template-compiler": "^2.6.14",
+    "sass": "^1.62.1",
+    "sass-loader": "^10.4.1"
+  }
+}

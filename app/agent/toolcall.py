@@ -43,6 +43,10 @@ class ToolCallAgent(ReActAgent):
             self.messages += [user_msg]
 
         try:
+            # If using CodeBuddy LLM, set the tool collection
+            if hasattr(self.llm, "set_tool_collection"):
+                self.llm.set_tool_collection(self.available_tools)
+
             # Get response with tool options
             response = await self.llm.ask_tool(
                 messages=self.messages,

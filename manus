@@ -1,0 +1,301 @@
+#!/bin/bash
+# OpenManus + CodeBuddy SDK 执行工具
+# 使用方法: ./manus "你的任务"
+
+set -e
+
+# 颜色定义
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# 项目目录
+PROJECT_DIR="/Users/jasonwang/workspace/OpenManus"
+OUTPUT_DIR="$PROJECT_DIR/output"
+
+# CodeBuddy 配置
+export CODEBUDDY_CODE_PATH="/Users/jasonwang/.nvm/versions/node/v22.15.1/bin/codebuddy"
+export CODEBUDDY_API_KEY="ck_f9gwukdhccn4.j1twF8hHyb_wXzr8pnmeCoSYlA9OF5F8M7RBZvsLeb8"
+export CODEBUDDY_INTERNET_ENVIRONMENT=internal
+
+# 打印带颜色的消息
+print_info() {
+    echo -e "${BLUE}ℹ️  $1${NC}"
+}
+
+print_success() {
+    echo -e "${GREEN}✅ $1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}⚠️  $1${NC}"
+}
+
+print_error() {
+    echo -e "${RED}❌ $1${NC}"
+}
+
+# 检查环境
+check_environment() {
+    print_info "检查运行环境..."
+
+    # 检查项目目录
+    if [ ! -d "$PROJECT_DIR" ]; then
+        print_error "项目目录不存在: $PROJECT_DIR"
+        exit 1
+    fi
+
+    # 检查虚拟环境
+    if [ ! -d "$PROJECT_DIR/.venv" ]; then
+        print_warning "虚拟环境不存在，正在创建..."
+        cd "$PROJECT_DIR"
+        # 尝试找到 ARM64 Python
+        if command -v /opt/homebrew/bin/python3 >/dev/null 2>&1; then
+            PYTHON_CMD="/opt/homebrew/bin/python3"
+        elif command -v /usr/bin/python3 >/dev/null 2>&1; then
+            PYTHON_CMD="/usr/bin/python3"
+        else
+            PYTHON_CMD="python3"
+        fi
+        $PYTHON_CMD -m venv .venv
+        print_success "虚拟环境创建完成"
+    fi
+
+    # 检查虚拟环境 Python 架构
+    VENV_PYTHON="$PROJECT_DIR/.venv/bin/python"
+    if [ -f "$VENV_PYTHON" ]; then
+        VENV_ARCH=$($VENV_PYTHON -c "import platform; print(platform.machine())" 2>/dev/null || echo "unknown")
+        SYS_ARCH=$(uname -m)
+        if [ "$VENV_ARCH" != "$SYS_ARCH" ] && [ "$SYS_ARCH" = "arm64" ]; then
+            print_warning "虚拟环境架构不匹配 ($VENV_ARCH vs $SYS_ARCH)，正在重建..."
+            rm -rf "$PROJECT_DIR/.venv"
+            if command -v /opt/homebrew/bin/python3 >/dev/null 2>&1; then
+                /opt/homebrew/bin/python3 -m venv .venv
+            else
+                python3 -m venv .venv
+            fi
+            print_success "虚拟环境重建完成"
+        fi
+    fi
+
+    # 检查 CodeBuddy CLI
+    if [ ! -f "$CODEBUDDY_CODE_PATH" ]; then
+        print_error "CodeBuddy CLI 未找到: $CODEBUDDY_CODE_PATH"
+        exit 1
+    fi
+
+    # 检查输出目录
+    if [ ! -d "$OUTPUT_DIR" ]; then
+        mkdir -p "$OUTPUT_DIR"
+        print_success "创建输出目录: $OUTPUT_DIR"
+    fi
+
+    print_success "环境检查完成"
+}
+
+# 显示帮助信息
+show_help() {
+    cat << EOF
+🚀 OpenManus + CodeBuddy SDK 执行工具
+
+用法:
+  ./manus "你的任务描述"
+  ./manus --help
+
+示例:
+  ./manus "创建一个贪吃蛇游戏"
+  ./manus "实现一个待办事项管理应用"
+  ./manus "分析数据并生成可视化图表"
+  ./manus "创建一个北京三日游的地图路书"
+
+选项:
+  --help, -h    显示此帮助信息
+
+输出:
+  生成的文件保存在: $OUTPUT_DIR/
+
+配置:
+  CodeBuddy CLI: $CODEBUDDY_CODE_PATH
+  API Key: ***${CODEBUDDY_API_KEY: -8}
+  Environment: $CODEBUDDY_INTERNET_ENVIRONMENT
+
+EOF
+}
+
+# 主函数
+main() {
+    # 检查参数
+    if [ $# -eq 0 ]; then
+        print_warning "未提供任务描述"
+        echo ""
+        show_help
+        exit 1
+    fi
+
+    # 处理帮助选项
+    if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+        show_help
+        exit 0
+    fi
+
+    # 获取任务描述
+    PROMPT="$*"
+
+    echo ""
+    echo "🚀 OpenManus + CodeBuddy SDK"
+    echo "========================================================================"
+    print_info "任务: $PROMPT"
+    print_info "输出: $OUTPUT_DIR/"
+    echo "========================================================================"
+    echo ""
+
+    # 检查环境
+    check_environment
+
+    # 切换到项目目录
+    cd "$PROJECT_DIR"
+
+    # 激活虚拟环境
+    source .venv/bin/activate
+
+    # 检查必要的Python包
+    print_info "检查依赖..."
+
+    # 检测系统架构
+    SYSTEM_ARCH=$(uname -m)
+    PYTHON_ARCH=$(python -c "import platform; print(platform.machine())" 2>/dev/null || echo "unknown")
+
+    # 检查关键依赖（特别是 regex, tiktoken, pydantic_core，它们有架构问题）
+    ARCH_CHECK_FAILED=false
+
+    # 检查 regex
+    if ! python -c "import regex" 2>/dev/null 2>&1; then
+        ARCH_CHECK_FAILED=true
+    fi
+
+    # 检查 tiktoken
+    if ! python -c "import tiktoken" 2>/dev/null 2>&1; then
+        ARCH_CHECK_FAILED=true
+    fi
+
+    # 检查 pydantic_core
+    if ! python -c "import pydantic_core" 2>/dev/null 2>&1; then
+        ARCH_CHECK_FAILED=true
+    fi
+
+    # 如果系统是 ARM64 但 Python 或包架构不匹配，强制重新安装
+    if [ "$SYSTEM_ARCH" = "arm64" ] && [ "$PYTHON_ARCH" != "arm64" ]; then
+        print_warning "检测到架构不匹配（系统: $SYSTEM_ARCH, Python: $PYTHON_ARCH），正在重新安装..."
+        ARCH_CHECK_FAILED=true
+    fi
+
+    if [ "$ARCH_CHECK_FAILED" = true ]; then
+        print_warning "正在重新安装关键依赖（强制 ARM64 架构）..."
+        # 使用 arch -arm64 强制 ARM64 架构
+        arch -arm64 pip uninstall -y regex tiktoken pydantic-core pydantic 2>/dev/null || true
+        arch -arm64 pip install --no-cache-dir --force-reinstall regex tiktoken pydantic-core pydantic 2>&1 | grep -v "already satisfied" || true
+
+        # 验证安装（使用 arch -arm64 确保架构正确）
+        if [ "$SYSTEM_ARCH" = "arm64" ]; then
+            if ! arch -arm64 python -c "import regex; import tiktoken; import pydantic_core" 2>/dev/null; then
+                print_error "依赖安装失败，请检查网络和磁盘空间"
+                exit 1
+            fi
+        else
+            if ! python -c "import regex; import tiktoken; import pydantic_core" 2>/dev/null; then
+                print_error "依赖安装失败，请检查网络和磁盘空间"
+                exit 1
+            fi
+        fi
+        print_success "关键依赖已重新安装"
+    fi
+
+    # 检查其他依赖（包括可能有架构问题的包）
+    MISSING_DEPS=false
+    ARCH_PROBLEM_PACKAGES=""
+
+    # 检查基础依赖
+    if ! python -c "import pydantic, openai, codebuddy_agent_sdk, browser_use, baidusearch" 2>/dev/null; then
+        MISSING_DEPS=true
+    fi
+
+    # 检查可能有架构问题的包
+    for pkg in jiter primp; do
+        if ! python -c "import $pkg" 2>/dev/null 2>&1; then
+            ARCH_PROBLEM_PACKAGES="$ARCH_PROBLEM_PACKAGES $pkg"
+            MISSING_DEPS=true
+        fi
+    done
+
+    if [ "$MISSING_DEPS" = true ]; then
+        print_warning "缺少依赖，正在安装..."
+        # 如果系统是 ARM64，使用 arch -arm64 强制 ARM64 架构
+        if [ "$SYSTEM_ARCH" = "arm64" ]; then
+            PIP_CMD="arch -arm64 pip"
+        else
+            PIP_CMD="pip"
+        fi
+
+        # 先安装可能有架构问题的包（强制 ARM64）
+        if [ -n "$ARCH_PROBLEM_PACKAGES" ]; then
+            print_info "安装架构敏感依赖（强制 ARM64）..."
+            $PIP_CMD install --no-cache-dir --force-reinstall $ARCH_PROBLEM_PACKAGES 2>&1 | grep -v "already satisfied" || true
+        fi
+
+        # 安装完整依赖（从 requirements.txt）
+        if [ -f "$PROJECT_DIR/requirements.txt" ]; then
+            $PIP_CMD install -q --no-cache-dir -r "$PROJECT_DIR/requirements.txt" 2>&1 | grep -v "already satisfied" || true
+        else
+            # 如果没有 requirements.txt，安装核心依赖
+            $PIP_CMD install -q --no-cache-dir pydantic tenacity loguru boto3 aiofiles colorama structlog pyyaml codebuddy-agent-sdk browser-use baidusearch 2>&1 | grep -v "already satisfied" || true
+        fi
+        print_success "依赖安装完成"
+    else
+        print_success "依赖检查完成"
+    fi
+
+    # 检查 run_with_manus_agent.py 是否存在
+    if [ ! -f "$PROJECT_DIR/run_with_manus_agent.py" ]; then
+        print_error "找不到 run_with_manus_agent.py"
+        exit 1
+    fi
+
+    # 运行任务
+    print_info "开始执行任务..."
+    echo ""
+
+    # 使用 exec 确保正确的退出码传递
+    # 使用 arch -arm64 确保使用 ARM64 架构运行 Python
+    # 这样可以避免架构不匹配的问题
+    if [ "$SYSTEM_ARCH" = "arm64" ]; then
+        exec arch -arm64 python run_with_manus_agent.py --prompt "$PROMPT"
+    else
+        exec python run_with_manus_agent.py --prompt "$PROMPT"
+    fi
+
+    EXIT_CODE=$?
+
+    echo ""
+    echo "========================================================================"
+
+    if [ $EXIT_CODE -eq 0 ]; then
+        print_success "任务执行成功！"
+        echo ""
+        print_info "生成的文件位于: $OUTPUT_DIR/"
+        echo ""
+        echo "查看文件:"
+        echo "  cd $OUTPUT_DIR"
+        echo "  ls -la"
+    else
+        print_error "任务执行失败（退出码: $EXIT_CODE）"
+        exit $EXIT_CODE
+    fi
+
+    echo "========================================================================"
+}
+
+# 运行主函数
+main "$@"
+

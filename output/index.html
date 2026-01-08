@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>北京三日旅游指南</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- 腾讯地图 JavaScript API GL -->
+  <!-- 注意：需要申请腾讯地图API密钥，访问 https://lbs.qq.com/ 申请 -->
+  <!-- 临时使用测试密钥，生产环境请替换为您的正式密钥 -->
+  <script charset="utf-8" src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-6PB5F"></script>
+  <!-- 如果上述密钥无效，请访问 https://lbs.qq.com/ 申请您自己的密钥并替换上面的 key 参数 -->
+</head>
+
+<body>
+  <header class="header">
+    <div class="container">
+      <h1 class="title">北京三日旅游指南</h1>
+      <p class="subtitle">探索千年古都，体验中华文明</p>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- 三日路线选择 -->
+    <section class="itinerary-section">
+      <div class="container">
+        <h2 class="section-title">三日旅游路线</h2>
+        <div class="days-container">
+          <button class="day-btn active" data-day="1">第一天</button>
+          <button class="day-btn" data-day="2">第二天</button>
+          <button class="day-btn" data-day="3">第三天</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 景点信息展示 -->
+    <section class="spots-section">
+      <div class="container">
+        <div class="content-wrapper">
+          <!-- 左侧景点列表 -->
+          <div class="spots-list">
+            <h3 class="list-title">景点列表</h3>
+            <div id="spotsContainer">
+              <!-- 景点列表将由JS动态生成 -->
+            </div>
+          </div>
+
+          <!-- 右侧地图 -->
+          <div class="map-container">
+            <div id="map"></div>
+            <div class="map-info">
+              <p class="map-tip">点击景点查看详情并在地图上定位</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 景点详情 -->
+    <section class="detail-section" id="detailSection" style="display: none;">
+      <div class="container">
+        <div class="detail-card">
+          <button class="close-btn" id="closeDetail">&times;</button>
+          <h3 class="detail-title" id="detailTitle"></h3>
+          <div class="detail-info">
+            <p class="detail-description" id="detailDescription"></p>
+            <div class="detail-meta">
+              <span class="meta-item">
+                <strong>开放时间：</strong>
+                <span id="detailOpenTime"></span>
+              </span>
+              <span class="meta-item">
+                <strong>门票价格：</strong>
+                <span id="detailPrice"></span>
+              </span>
+              <span class="meta-item">
+                <strong>建议游览时长：</strong>
+                <span id="detailDuration"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 北京旅游指南 | 探索千年古都的魅力</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>

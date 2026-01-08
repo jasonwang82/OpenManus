@@ -137,6 +137,37 @@ For unstable multi-agent version, you also can run:
 python run_flow.py
 ```
 
+### CodeBuddy Agent SDK Backend (New!)
+
+OpenManus now supports using CodeBuddy Agent SDK as an alternative LLM backend. This provides:
+- ✅ Enhanced agent capabilities
+- ✅ Full tool calling support
+- ✅ Same "Manus effect" experience
+- ✅ Compatible with OpenAI, Claude, and other models
+
+**Quick Setup:**
+
+1. Install CodeBuddy SDK:
+   ```bash
+   pip install codebuddy-agent-sdk
+   ```
+
+2. Configure in `config/config.toml`:
+   ```toml
+   [llm]
+   backend = "codebuddy"
+   model = "gpt-4o"
+   api_key = "your-api-key"
+   permission_mode = "bypassPermissions"
+   ```
+
+3. Run normally:
+   ```bash
+   python main.py
+   ```
+
+📖 **Full Documentation**: See [CODEBUDDY_INTEGRATION.md](CODEBUDDY_INTEGRATION.md) for detailed setup and configuration options.
+
 ### Custom Adding Multiple Agents
 
 Currently, besides the general OpenManus Agent, we have also integrated the DataAnalysis Agent, which is suitable for data analysis and data visualization tasks. You can add this agent to `run_flow` in `config.toml`.

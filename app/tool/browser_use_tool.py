@@ -4,8 +4,13 @@ import json
 from typing import Generic, Optional, TypeVar
 
 from browser_use import Browser as BrowserUseBrowser
-from browser_use import BrowserConfig
-from browser_use.browser.context import BrowserContext, BrowserContextConfig
+# BrowserConfig is not available in newer browser_use versions
+BrowserConfig = None
+try:
+    from browser_use.browser.context import BrowserContext, BrowserContextConfig
+except ImportError:
+    BrowserContext = None
+    BrowserContextConfig = None
 from browser_use.dom.service import DomService
 from pydantic import Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
@@ -169,7 +174,8 @@ class BrowserUseTool(BaseTool, Generic[Context]):
                         if not isinstance(value, list) or value:
                             browser_config_kwargs[attr] = value
 
-            self.browser = BrowserUseBrowser(BrowserConfig(**browser_config_kwargs))
+            # Newer browser_use versions accept dict directly
+            self.browser = BrowserUseBrowser(**browser_config_kwargs)
 
         if self.context is None:
             context_config = BrowserContextConfig()

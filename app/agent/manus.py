@@ -14,6 +14,9 @@ from app.tool.mcp import MCPClients, MCPClientTool
 from app.tool.python_execute import PythonExecute
 from app.tool.str_replace_editor import StrReplaceEditor
 
+# ComputerUseTool requires sandbox environment, so we don't include it in the default Manus agent
+# It's available in SandboxManus instead
+
 
 class Manus(ToolCallAgent):
     """A versatile general-purpose agent with support for both local and MCP tools."""
@@ -31,6 +34,7 @@ class Manus(ToolCallAgent):
     mcp_clients: MCPClients = Field(default_factory=MCPClients)
 
     # Add general-purpose tools to the tool collection
+    # Note: ComputerUseTool requires sandbox environment and is available in SandboxManus
     available_tools: ToolCollection = Field(
         default_factory=lambda: ToolCollection(
             PythonExecute(),

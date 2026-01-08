@@ -29,6 +29,16 @@ class LLMSettings(BaseModel):
     api_type: str = Field(..., description="Azure, Openai, or Ollama")
     api_version: str = Field(..., description="Azure Openai version if AzureOpenai")
 
+    # CodeBuddy-specific settings
+    backend: str = Field(default="openai", description="Backend type: 'openai' or 'codebuddy'")
+    codebuddy_code_path: Optional[str] = Field(
+        None, description="Path to CodeBuddy CLI executable"
+    )
+    permission_mode: Optional[str] = Field(
+        None,
+        description="CodeBuddy permission mode: 'default', 'acceptEdits', 'plan', or 'bypassPermissions'"
+    )
+
 
 class ProxySettings(BaseModel):
     server: str = Field(None, description="Proxy server address")
@@ -106,7 +116,7 @@ class SandboxSettings(BaseModel):
 
 
 class DaytonaSettings(BaseModel):
-    daytona_api_key: str
+    daytona_api_key: Optional[str] = Field(default=None, description="Daytona API key")
     daytona_server_url: Optional[str] = Field(
         "https://app.daytona.io/api", description=""
     )
@@ -246,6 +256,9 @@ class Config:
             "temperature": base_llm.get("temperature", 1.0),
             "api_type": base_llm.get("api_type", ""),
             "api_version": base_llm.get("api_version", ""),
+            "backend": base_llm.get("backend", "openai"),
+            "codebuddy_code_path": base_llm.get("codebuddy_code_path"),
+            "permission_mode": base_llm.get("permission_mode"),
         }
 
         # handle browser config.

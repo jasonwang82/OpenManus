@@ -177,6 +177,20 @@ class LLM:
     def __new__(
         cls, config_name: str = "default", llm_config: Optional[LLMSettings] = None
     ):
+        # Check if we should use CodeBuddy backend
+        llm_config_to_check = llm_config or config.llm
+        llm_config_to_check = llm_config_to_check.get(config_name, llm_config_to_check["default"])
+
+        # If backend is "codebuddy", return CodeBuddyLLM instead
+        if hasattr(llm_config_to_check, "backend") and llm_config_to_check.backend == "codebuddy":
+            from app.llm_codebuddy import CodeBuddyLLM
+            # Create unique key for CodeBuddy instances
+            codebuddy_key = f"codebuddy_{config_name}"
+            if codebuddy_key not in cls._instances:
+                cls._instances[codebuddy_key] = CodeBuddyLLM(config_name, llm_config)
+            return cls._instances[codebuddy_key]
+
+        # Default: use OpenAI backend
         if config_name not in cls._instances:
             instance = super().__new__(cls)
             instance.__init__(config_name, llm_config)

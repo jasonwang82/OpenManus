@@ -1,0 +1,319 @@
+/* 全局样式 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f5f5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 头部样式 */
+.header {
+  background: linear-gradient(135deg, #c41e3a 0%, #8b0000 100%);
+  color: white;
+  padding: 40px 0;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header .title {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.header .subtitle {
+  font-size: 1.2em;
+  opacity: 0.9;
+}
+
+/* 主体内容 */
+.main {
+  padding: 40px 0;
+}
+
+.section-title {
+  font-size: 2em;
+  color: #c41e3a;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* 三日路线选择 */
+.itinerary-section {
+  margin-bottom: 40px;
+}
+
+.days-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.day-btn {
+  padding: 15px 40px;
+  font-size: 1.1em;
+  border: 2px solid #c41e3a;
+  background-color: white;
+  color: #c41e3a;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.day-btn:hover {
+  background-color: #c41e3a;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(196, 30, 58, 0.3);
+}
+
+.day-btn.active {
+  background-color: #c41e3a;
+  color: white;
+}
+
+/* 景点展示区域 */
+.spots-section {
+  margin-bottom: 40px;
+}
+
+.content-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+}
+
+/* 景点列表 */
+.spots-list {
+  background: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.list-title {
+  font-size: 1.5em;
+  color: #c41e3a;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #c41e3a;
+}
+
+.spot-item {
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.spot-item:hover {
+  background-color: #fff5f5;
+  border-left-color: #c41e3a;
+  transform: translateX(5px);
+}
+
+.spot-item.active {
+  background-color: #fff5f5;
+  border-left-color: #c41e3a;
+  box-shadow: 0 2px 5px rgba(196, 30, 58, 0.2);
+}
+
+.spot-name {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.spot-brief {
+  font-size: 0.9em;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 地图容器 */
+.map-container {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 500px;
+}
+
+.map-info {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.map-tip {
+  color: #666;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+/* 景点详情 */
+.detail-section {
+  margin-bottom: 40px;
+}
+
+.detail-card {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: #c41e3a;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2em;
+  line-height: 1;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #8b0000;
+  transform: rotate(90deg);
+}
+
+.detail-title {
+  font-size: 1.8em;
+  color: #c41e3a;
+  margin-bottom: 20px;
+  padding-right: 40px;
+}
+
+.detail-description {
+  font-size: 1em;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.meta-item {
+  font-size: 0.95em;
+  color: #666;
+}
+
+.meta-item strong {
+  color: #c41e3a;
+}
+
+/* 页脚 */
+.footer {
+  background: #333;
+  color: white;
+  padding: 30px 0;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.footer p {
+  font-size: 0.95em;
+  opacity: 0.8;
+}
+
+/* 响应式设计 */
+@media (max-width: 968px) {
+  .content-wrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .map-container {
+    order: -1;
+  }
+
+  #map {
+    height: 400px;
+  }
+}
+
+@media (max-width: 600px) {
+  .header .title {
+    font-size: 1.8em;
+  }
+
+  .header .subtitle {
+    font-size: 1em;
+  }
+
+  .section-title {
+    font-size: 1.5em;
+  }
+
+  .day-btn {
+    padding: 12px 30px;
+    font-size: 1em;
+  }
+
+  .days-container {
+    gap: 10px;
+  }
+
+  .detail-meta {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #map {
+    height: 300px;
+  }
+}

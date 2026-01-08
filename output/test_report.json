@@ -1,0 +1,45 @@
+{
+  "status": "success",
+  "tests": [
+    {
+      "name": "页面加载",
+      "status": "passed"
+    },
+    {
+      "name": "三天路线按钮",
+      "status": "passed"
+    },
+    {
+      "name": "第一天景点",
+      "status": "passed",
+      "count": 3
+    },
+    {
+      "name": "景点详情显示",
+      "status": "passed"
+    },
+    {
+      "name": "关闭详情弹窗",
+      "status": "passed"
+    },
+    {
+      "name": "第二天切换",
+      "status": "passed",
+      "count": 3
+    },
+    {
+      "name": "第三天切换",
+      "status": "passed",
+      "count": 3
+    },
+    {
+      "name": "详情内容验证",
+      "status": "passed"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 8,
+    "failed": 0
+  }
+}
